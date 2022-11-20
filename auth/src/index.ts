@@ -1,11 +1,15 @@
 import express from 'express';
+import { errorHandler } from '../middlewares/errorHandler';
+import currentUserRouter from './routes/current-user';
+import signupRouter from './routes/signup';
 
 const app = express();
 app.use(express.json());
 
-app.get('/api/users/currentuser', (req, res) => {
-  res.send('HOLA')
-})
+app.use(currentUserRouter);
+app.use(signupRouter);
+
+app.use(errorHandler)
 
 app.listen(3000, () => {
   console.log("AUTH: Listen PORT 3000!!!!!!!!!!")
