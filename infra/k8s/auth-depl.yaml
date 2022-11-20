@@ -13,8 +13,10 @@ spec:
         app: auth
     spec:
       containers:
-        - name: auth
-          image: us.gcr.io/ticketing-dev-368812/auth
+      - name: auth
+        image: us.gcr.io/ticketing-dev-368812/auth
+        ports: 
+        - containerPort: 3000
 
 ---
 apiVersion: v1
@@ -25,7 +27,7 @@ spec:
   selector: 
     app: auth
   ports:
-    - name: auth
-      protocol: TCP
-      port: 3000
-      targetPort: 3000
+  - name: auth
+    protocol: TCP
+    port: 3000
+    targetPort: 3000
