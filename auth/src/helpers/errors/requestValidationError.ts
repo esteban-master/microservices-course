@@ -4,7 +4,7 @@ import { CustomError } from "./customError";
 export class RequestValidationError extends CustomError {
   public readonly statusCode = 400;
   constructor(private readonly errors: ValidationError[]) {
-    super()
+    super('Invalid request parameters')
   }
 
   serializeError(){

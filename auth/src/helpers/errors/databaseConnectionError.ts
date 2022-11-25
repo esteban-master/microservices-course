@@ -4,7 +4,7 @@ export class DatabaseConnectionError extends CustomError {
   public readonly statusCode = 500;
 
   constructor() {
-    super()
+    super('Error connecting to database')
   }
 
   serializeError(){
