@@ -1,17 +1,23 @@
 import { Schema, model, Document, Model } from "mongoose";
-
-const UserSchema = new Schema({
+export interface UserDoc {
+  name: string;
+  email: string;
+  createdAt: Date;
+  updatedAt: Date | number;
+  password: string | undefined;
+}
+const UserSchema = new Schema<UserDoc>({
   name: {
     type: String,
-    trim: true as Boolean,
-    required: "El nombre es requerido",
+    trim: true,
+    required: true,
   },
   email: {
     type: String,
-    trim: true as Boolean,
-    unique: "Email ya existe",
+    trim: true,
+    unique: true,
     match: [/.+\@.+\..+/, "Porfavor ingrese un email valido"],
-    required: "El email es requerido",
+    required: true,
   },
   createdAt: {
     type: Date,
@@ -22,24 +28,18 @@ const UserSchema = new Schema({
     type: String,
     required: "El password es requerido",
   },
+}, {
+  toJSON: {
+    transform(doc, ret) {
+      ret.id = ret._id;
+      delete ret._id;
+      delete ret.password;
+      delete ret.__v;
+    }
+  }
 });
 
-UserSchema.methods = {
-  autenticar: function (password: string) {
-    console.log({password})
-    return true;
-  }
-};
-
-export interface User {
-  name: string;
-  email: string;
-  createdAt: Date;
-  updatedAt: Date | number;
-  password: string | undefined;
-}
-
-export interface UserBaseDocument extends User, Document {
+export interface UserBaseDocument extends UserDoc, Document {
   autenticar(password: string): boolean;
 }
 

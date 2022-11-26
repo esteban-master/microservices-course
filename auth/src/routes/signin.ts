@@ -7,30 +7,28 @@ import { validateRequest } from "../middlewares/validateRequest";
 
 const router = Router();
 
-router.route('/api/users/signup')
+router.route('/api/users/signin')
   .post(...[
     body('email').isEmail().withMessage('Email must be valid'),
     body('password').trim().isLength({ min: 4, max: 20 }).withMessage('Password must be beetwen 4 and 20 characters')
   ],
   validateRequest,
   async(req, res) => {
-    const { password, email, name } = req.body;
+    const { password, email } = req.body;
     const findUser = await User.findOne({ email })
-    if(findUser) {
-      throw new BadRequestError('Email in use')
+    if (!findUser) {
+      throw new BadRequestError('Invalid credentials')
     }
-    const newUser = new User({
-      password,
-      email,
-      name
-    }) 
-    await newUser.save()
+
+    if (findUser.password !== password) {
+      throw new BadRequestError('Invalid credentials')
+    }
 
     // Generate JWT
     const userJwt = jwt.sign(
       {
-        id: newUser.id,
-        email: newUser.email
+        id: findUser.id,
+        email: findUser.email
       },
       process.env.JWT_KEY!
     );
@@ -39,7 +37,7 @@ router.route('/api/users/signup')
       jwt: userJwt
     };
     
-    res.status(201).json(newUser)
+    res.status(200).json(findUser)
   })
 
 export default router;
